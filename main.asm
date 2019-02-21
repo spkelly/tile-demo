@@ -4,6 +4,7 @@ INCLUDE "gbhw.inc"
 ; hl: destination
 ; bc: index
 
+SLEEP_DELAY EQU $FF00
 
 Section "Start", ROM0[$100]
   nop
@@ -22,7 +23,20 @@ Begin::
   call load_data
   call turn_on_lcd
 infinite_loop::
-  nop
+  call sleep
+  call sleep
+  call wait_vblank
+  ld a,%01010011
+  ld [rBGP],a
+  call sleep
+  call sleep
+  call wait_vblank
+  ld a,%11100100
+  ld [rBGP],a
+  ; call turn_off_lcd
+  ; call update_data
+  ; call turn_on_lcd
+  ; nop
   jr infinite_loop
 
 
@@ -44,11 +58,20 @@ turn_on_lcd::
   ld [rLCDC], a
   ret
 
+sleep::
+  ld bc, SLEEP_DELAY
+.sleep_loop
+  dec bc 
+  ld a, b
+  or c
+  jr nz, .sleep_loop
+  ret
 
 load_data::
   call CLEAR_BG_MAP
   call CLEAR_OAM
   call LOAD_BG_TILE_DATA
+  call LOAD_TITLE_TILE_DATA
   call LOAD_BG_TILE_MAP
   ret 
 
@@ -97,6 +120,10 @@ LOAD_BG_TILE_DATA::
   ld hl, _VRAM + $10
   call CopyData
   ret
+
+LOAD_TITLE_TILE_DATA::
+  ld bc, TITLE_TILE_DATA - END_TITLE_TILE_DATA
+  ld de, TITLE_TILE_DATA
 
 
 LOAD_BG_TILE_MAP::
@@ -179,5 +206,6 @@ LOAD_BG_TILE_MAP::
   ret
 
 
-INCLUDE "assets/bg_tile_data.inc";
+INCLUDE "assets/bg_tile_data.inc"
+INCLUDE "assets/title_tile_data.inc"
 INCLUDE "assets/bg_tile_map.inc"
