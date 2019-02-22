@@ -20,7 +20,9 @@ Begin::
   ld [rBGP], a
   call wait_vblank
   call turn_off_lcd
+ 
   call load_data
+  call LOAD_TITLE
   call turn_on_lcd
 infinite_loop::
   call sleep
@@ -71,10 +73,18 @@ load_data::
   call CLEAR_BG_MAP
   call CLEAR_OAM
   call LOAD_BG_TILE_DATA
+  call LOAD_FONT_TILE_DATA
   call LOAD_TITLE_TILE_DATA
   call LOAD_BG_TILE_MAP
+
   ret 
 
+LOAD_TITLE::
+  ld de, TITLE_TEXT
+  ld hl, $9800 + ($20 * 4) + 5
+  ld bc, END_TITLE_TEXT - TITLE_TEXT
+  call CopyData
+  ret
 
 CLEAR_BG_MAP:: 
   ld e, $00
@@ -84,6 +94,7 @@ CLEAR_BG_MAP::
   ret
 
 
+;de= source, hl=destination bc=size
 CopyData::
   xor a
   ld a, [de]
@@ -114,6 +125,7 @@ CLEAR_OAM::
   ret
 
 
+
 LOAD_BG_TILE_DATA::
   ld bc, BG_TILE_DATA_END - BG_TILE_DATA
   ld de, BG_TILE_DATA
@@ -124,6 +136,14 @@ LOAD_BG_TILE_DATA::
 LOAD_TITLE_TILE_DATA::
   ld bc, TITLE_TILE_DATA - END_TITLE_TILE_DATA
   ld de, TITLE_TILE_DATA
+
+
+; CHECK_FOR_USER_TILE::
+;   ld bc, USER_TILE_DATA - END_USER_TILE_DATA
+;   jp nz, LOAD_USER_TILE_DATA
+;   ret
+; LOAD_USER_TILE_DATA::
+;   ret
 
 
 LOAD_BG_TILE_MAP::
@@ -205,7 +225,21 @@ LOAD_BG_TILE_MAP::
   call CopyData
   ret
 
+LOAD_FONT_TILE_DATA::
+  ld hl, $8200
+  ld de, FONT_TILES
+
+  ld bc, END_FONT_TILES - FONT_TILES
+
+  call CopyData
+  ret   
+
+
+
+TITLE_TEXT::
+  db "Tile Demo!"
+END_TITLE_TEXT
 
 INCLUDE "assets/bg_tile_data.inc"
-INCLUDE "assets/title_tile_data.inc"
 INCLUDE "assets/bg_tile_map.inc"
+INCLUDE "assets/fontTile.inc"
