@@ -74,7 +74,6 @@ load_data::
   call CLEAR_OAM
   call LOAD_BG_TILE_DATA
   call LOAD_FONT_TILE_DATA
-  call LOAD_TITLE_TILE_DATA
   call LOAD_BG_TILE_MAP
 
   ret 
@@ -133,9 +132,6 @@ LOAD_BG_TILE_DATA::
   call CopyData
   ret
 
-LOAD_TITLE_TILE_DATA::
-  ld bc, TITLE_TILE_DATA - END_TITLE_TILE_DATA
-  ld de, TITLE_TILE_DATA
 
 
 ; CHECK_FOR_USER_TILE::
@@ -236,10 +232,9 @@ LOAD_FONT_TILE_DATA::
 
 
 
-TITLE_TEXT::
-  db "Tile Demo!"
-END_TITLE_TEXT
+
 
 INCLUDE "assets/bg_tile_data.inc"
 INCLUDE "assets/bg_tile_map.inc"
 INCLUDE "assets/fontTile.inc"
+INCLUDE "assets/text.inc"
