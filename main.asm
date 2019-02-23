@@ -142,6 +142,21 @@ LOAD_BG_TILE_DATA::
 ;   ret
 
 
+
+
+LOAD_FONT_TILE_DATA::
+  ld hl, $8200
+  ld de, FONT_TILES
+
+  ld bc, END_FONT_TILES - FONT_TILES
+
+  call CopyData
+  ret   
+
+
+
+
+
 LOAD_BG_TILE_MAP::
   ld bc, $14
   ld hl, _SCRN0
@@ -211,28 +226,11 @@ LOAD_BG_TILE_MAP::
   ld hl, _SCRN0 + ($20 * 16)
   ld de, BG_TILE_MAP + ($14 * 16)
   call CopyData
-    ld bc, $14
+  ld bc, $14
   ld hl, _SCRN0 + ($20 * 17)
   ld de, BG_TILE_MAP + ($14 * 17)
   call CopyData
-    ld bc, $14
-  ld hl, _SCRN0 + ($20 * 18)
-  ld de, BG_TILE_MAP + ($14 * 18)
-  call CopyData
   ret
-
-LOAD_FONT_TILE_DATA::
-  ld hl, $8200
-  ld de, FONT_TILES
-
-  ld bc, END_FONT_TILES - FONT_TILES
-
-  call CopyData
-  ret   
-
-
-
-
 
 INCLUDE "assets/bg_tile_data.inc"
 INCLUDE "assets/bg_tile_map.inc"
